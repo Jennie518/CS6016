@@ -1,0 +1,121 @@
+# Relational Algebra Notes
+
+## Introduction
+Relational Algebra is a procedural query language used to query databases. It consists of a set of operations that take one or two relations as input and produce a new relation as output.
+
+## Basic Operations
+
+### 1. Selection (σ)
+The selection operation selects tuples that satisfy a given predicate.
+
+**Notation**:
+\[ \sigma_{\text{condition}}(R) \]
+
+**Example**:
+Select tuples from the Players relation where Elo is greater than or equal to 2850.
+\[ \sigma_{\text{Elo} \geq 2850}(\text{Players}) \]
+
+### 2. Projection (π)
+The projection operation selects certain columns from a relation.
+
+**Notation**:
+\[ \pi_{\text{attribute1, attribute2, \ldots}}(R) \]
+
+**Example**:
+Project the Name column from the Players relation.
+\[ \pi_{\text{Name}}(\text{Players}) \]
+
+### 3. Cartesian Product (×)
+The Cartesian product operation returns a relation that is the combination of every tuple from two relations.
+
+**Notation**:
+\[ R \times S \]
+
+**Example**:
+Generate the Cartesian product of Players and Games.
+\[ \text{Players} \times \text{Games} \]
+
+### 4. Join (⨝)
+The join operation combines tuples from two relations based on a common attribute.
+
+**Notation**:
+\[ R \bowtie_{\text{condition}} S \]
+
+**Example**:
+Join Players and Games where the pID in Players matches the wpID in Games.
+\[ \text{Players} \bowtie_{\text{Players.pID} = \text{Games.wpID}} \text{Games} \]
+
+### 5. Union (∪)
+The union operation returns a relation containing all tuples that appear in either of the two relations.
+
+**Notation**:
+\[ R \cup S \]
+
+### 6. Intersection (∩)
+The intersection operation returns a relation containing all tuples that appear in both of the two relations.
+
+**Notation**:
+\[ R \cap S \]
+
+### 7. Difference (−)
+The difference operation returns a relation containing all tuples that appear in the first relation but not in the second.
+
+**Notation**:
+\[ R - S \]
+
+### 8. Division (÷)
+The division operation returns a relation containing all tuples in one relation that are associated with all tuples in another relation.
+
+**Notation**:
+\[ R \div S \]
+
+**Example**:
+Let \( A(x, y) \) and \( B(y) \) be two relations.
+
+**Relation A**:
+| x  | y  |
+|----|----|
+| c1 | p1 |
+| c1 | p2 |
+| c1 | p3 |
+| c1 | p4 |
+| c2 | p1 |
+| c2 | p2 |
+| c3 | p2 |
+| c4 | p2 |
+| c4 | p4 |
+
+**Relation B**:
+| y  |
+|----|
+| p2 |
+| p4 |
+
+**Result of A ÷ B**:
+| x  |
+|----|
+| c1 |
+| c4 |
+
+## Example Queries
+
+### 1. Find the names of any player with an Elo rating of 2850 or higher
+\[ \pi_{\text{Name}} (\sigma_{\text{Elo} \geq 2850} (\text{Players})) \]
+
+### 2. Find the names of any player who has ever played a game as white
+\[ \pi_{\text{Name}} (\text{Players} \bowtie_{\text{Players.pID} = \text{Games.wpID}} \text{Games}) \]
+
+### 3. Find the names of any player who has ever won a game as white
+\[ \pi_{\text{Name}} (\text{Players} \bowtie_{\text{Players.pID} = \text{Games.wpID}} (\sigma_{\text{Result} = '1-0'} (\text{Games}))) \]
+
+### 4. Find the names of any player who played any games in 2018
+\[ \pi_{\text{Name}} ((\text{Players} \bowtie_{\text{Players.pID} = \text{Games.wpID}} (\text{Games} \bowtie_{\text{Games.eID} = \text{Events.eID}} (\sigma_{\text{Year} = 2018} (\text{Events})))) \cup (\text{Players} \bowtie_{\text{Players.pID} = \text{Games.bpID}} (\text{Games} \bowtie_{\text{Games.eID} = \text{Events.eID}} (\sigma_{\text{Year} = 2018} (\text{Events}))))) \]
+
+### 5. Find the names and dates of any event in which Magnus Carlsen lost a game
+\[ \pi_{\text{Name, Year}} ((\sigma_{\text{wpID} = 1 \land \text{Result} = '0-1'} (\text{Games}) \bowtie \text{Events}) \cup (\sigma_{\text{bpID} = 1 \land \text{Result} = '1-0'} (\text{Games}) \bowtie \text{Events})) \]
+
+### 6. Find the names of all opponents of Magnus Carlsen
+\[ \left(\rho_{\text{whiteGames}, \text{Games}} \bowtie_{\text{Players.pID} = \text{whiteGames.bpID}} (\sigma_{\text{wpID} = 1} (\text{whiteGames}))\right) \cup \left(\rho_{\text{blackGames}, \text{Games}} \bowtie_{\text{Players.pID} = \text{blackGames.wpID}} (\sigma_{\text{bpID} = 1} (\text{blackGames}))\right) \]
+
+## Conclusion
+Relational algebra provides a formal foundation for relational databases and SQL. Understanding these operations allows for the formulation of complex queries to retrieve and manipulate data.
